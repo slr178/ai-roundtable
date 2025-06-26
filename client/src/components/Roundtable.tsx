@@ -170,14 +170,14 @@ export default function Roundtable({
                     animation: 'spin 1s ease-in-out infinite',
                     marginRight: '10px'
                   }} />
-                  🔄 Fetching current debate...
+                  🔄 Loading debates...
                   <div style={{ 
                     fontSize: '0.85rem', 
                     opacity: 0.8, 
                     marginTop: '0.5rem',
                     fontStyle: 'italic'
                   }}>
-                    Loading latest AI roundtable status
+                    ⚠️ This may take a few moments if loading mid-debate
                   </div>
                 </>
               ) : pendingDebatesCount > 0 ? (

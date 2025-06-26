@@ -181,39 +181,8 @@ const Whitepaper: React.FC = () => {
           </p>
         </section>
 
-        {/* Current Status */}
+        {/* Performance Stats */}
         <section style={{ marginBottom: '3rem' }}>
-          <h2 style={{
-            fontSize: '1.5rem',
-            fontWeight: '600',
-            marginBottom: '1.5rem',
-            color: '#2c3e50',
-            borderBottom: '2px solid #ecf0f1',
-            paddingBottom: '0.5rem'
-          }}>
-            Current Status
-          </h2>
-
-          <p style={{
-            fontSize: '1rem',
-            color: '#34495e',
-            marginBottom: '1.5rem'
-          }}>
-            The system is running live at <strong>localhost:3000</strong> with active webhook monitoring. We're processing ~50 news articles daily from major sources.
-          </p>
-          <ul style={{
-            fontSize: '0.95rem',
-            color: '#34495e',
-            lineHeight: '1.6',
-            paddingLeft: '1.5rem',
-            marginBottom: '1.5rem'
-          }}>
-            <li>Real-time debates every 3 minutes</li>
-            <li>Auto-triggered by Reuters/Daily Mail posts</li>
-            <li>Full article content extraction and analysis</li>
-            <li>Political position tracking across all topics</li>
-          </ul>
-
           <div style={{
             background: '#f8f9fa',
             border: '1px solid #e9ecef',
@@ -237,9 +206,7 @@ const Whitepaper: React.FC = () => {
               color: '#34495e'
             }}>
               <div>• Average response time: ~45 seconds</div>
-              <div>• Webhook processing: &lt;5 seconds</div>
               <div>• Database queries: &lt;100ms</div>
-              <div>• WebSocket latency: &lt;50ms</div>
             </div>
           </div>
         </section>
