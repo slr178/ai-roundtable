@@ -4,6 +4,7 @@
   "description": "AI Roundtable Backend - Express server with Socket.IO",
   "main": "index.js",
   "scripts": {
+    "build": "echo 'No build step needed for backend server'",
     "start": "node index.js",
     "dev": "nodemon index.js"
   },
