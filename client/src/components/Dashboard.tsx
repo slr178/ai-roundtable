@@ -52,7 +52,7 @@ const Dashboard: React.FC = () => {
       try {
         const startTime = Date.now();
         
-        const response = await axios.post('http://localhost:5000/api/ai/test', {
+        const response = await axios.post(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/ai/test`, {
           agent: api.name,
           prompt: testPrompt
         }, { timeout: 10000 });
@@ -93,8 +93,8 @@ const Dashboard: React.FC = () => {
     const fetchData = async () => {
       try {
         const [agentsRes, threadsRes] = await Promise.all([
-          axios.get('http://localhost:5000/api/ai/agents'),
-          axios.get('http://localhost:5000/api/threads')
+                  axios.get(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/ai/agents`),
+        axios.get(`${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/api/threads`)
         ]);
         setAgents(agentsRes.data);
         setThreads(threadsRes.data);
