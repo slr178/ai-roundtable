@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>AI Political Bias Evolution Demo</title>
+  <style>
+    body { 
+      font-family: 'Courier New', monospace; 
+      padding: 2rem; 
+      background: #1a1a1a; 
+      color: #f0f0f0;
+      margin: 0;
+    }
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+    h1 {
+      text-align: center;
+      color: #ffd700;
+      text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.8);
+      margin-bottom: 2rem;
+    }
+    .topic-selector {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+    .topic-selector select {
+      padding: 0.5rem;
+      font-size: 1rem;
+      background: #333;
+      color: #f0f0f0;
+      border: 2px solid #555;
+      border-radius: 4px;
+    }
+    .agents-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+    .agent-button {
+      padding: 1.5rem;
+      border: 3px solid;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      background: rgba(255, 255, 255, 0.05);
+      min-height: 150px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .agent-button:hover:not(:disabled) {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+    }
+    .agent-button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    .agent-button.grok { border-color: #cc6600; }
+    .agent-button.gpt { border-color: #2d8f2d; }
+    .agent-button.claude { border-color: #2d5aa0; }
+    .agent-button.deepseek { border-color: #7a2d7a; }
+    
+    .agent-header h3 {
+      margin: 0 0 0.5rem 0;
+      font-size: 1.2rem;
+    }
+    .agent-header.grok h3 { color: #cc6600; }
+    .agent-header.gpt h3 { color: #2d8f2d; }
+    .agent-header.claude h3 { color: #2d5aa0; }
+    .agent-header.deepseek h3 { color: #7a2d7a; }
+    
+    .political-badge {
+      display: inline-block;
+      padding: 0.2rem 0.5rem;
+      border-radius: 12px;
+      font-size: 0.7rem;
+      font-weight: bold;
+      color: white;
+      text-transform: uppercase;
+    }
+    .badge-republican { background: #ff4444; }
+    .badge-democratic { background: #4444ff; }
+    .badge-libertarian { background: #ffaa00; }
+    .badge-communist { background: #cc0000; }
+    
+    .bias-info {
+      margin: 1rem 0;
+    }
+    .bias-level {
+      font-weight: bold;
+      color: #ffd700;
+    }
+    .click-prompt {
+      text-align: center;
+      font-size: 0.8rem;
+      opacity: 0.7;
+      margin-top: auto;
+    }
+    #response {
+      background: rgba(255, 255, 255, 0.1);
+      border: 2px solid #555;
+      border-radius: 8px;
+      padding: 2rem;
+      margin-top: 2rem;
+      white-space: pre-wrap;
+      min-height: 100px;
+    }
+    #status {
+      text-align: center;
+      margin: 1rem 0;
+      font-weight: bold;
+      color: #ffd700;
+    }
+    .controls {
+      text-align: center;
+      margin-top: 2rem;
+    }
+    .btn {
+      padding: 1rem 2rem;
+      font-size: 1rem;
+      cursor: pointer;
+      border: 2px solid #555;
+      background: #333;
+      color: #f0f0f0;
+      border-radius: 4px;
+      margin: 0 0.5rem;
+      transition: all 0.3s ease;
+    }
+    .btn:hover {
+      background: #555;
+      transform: translateY(-2px);
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🏛️ AI Political Bias Evolution Demo</h1>
+    
+    <div class="topic-selector">
+      <label for="topic-select">Discussion Topic: </label>
+      <select id="topic-select">
+        <option value="Latest political developments">Latest political developments</option>
+        <option value="Healthcare policy reform">Healthcare policy reform</option>
+        <option value="Climate change solutions">Climate change solutions</option>
+        <option value="Economic inequality">Economic inequality</option>
+        <option value="Immigration policy">Immigration policy</option>
+        <option value="Tech regulation">Tech regulation</option>
+        <option value="Education funding">Education funding</option>
+        <option value="Gun control measures">Gun control measures</option>
+      </select>
+    </div>
+
+    <div class="agents-grid">
+      <button class="agent-button grok" data-agent="grok">
+        <div class="agent-header grok">
+          <h3>GROK</h3>
+          <span class="political-badge badge-republican">Republican</span>
+        </div>
+        <div class="bias-info">
+          <div>Bias Level: <span class="bias-level" id="grok-level">0</span></div>
+          <div id="grok-desc">Neutral</div>
+        </div>
+        <div class="click-prompt">👆 Click to get response</div>
+      </button>
+
+      <button class="agent-button gpt" data-agent="gpt">
+        <div class="agent-header gpt">
+          <h3>GPT</h3>
+          <span class="political-badge badge-democratic">Democratic</span>
+        </div>
+        <div class="bias-info">
+          <div>Bias Level: <span class="bias-level" id="gpt-level">0</span></div>
+          <div id="gpt-desc">Neutral</div>
+        </div>
+        <div class="click-prompt">👆 Click to get response</div>
+      </button>
+
+      <button class="agent-button claude" data-agent="claude">
+        <div class="agent-header claude">
+          <h3>CLAUDE</h3>
+          <span class="political-badge badge-libertarian">Libertarian</span>
+        </div>
+        <div class="bias-info">
+          <div>Bias Level: <span class="bias-level" id="claude-level">0</span></div>
+          <div id="claude-desc">Neutral</div>
+        </div>
+        <div class="click-prompt">👆 Click to get response</div>
+      </button>
+
+      <button class="agent-button deepseek" data-agent="deepseek">
+        <div class="agent-header deepseek">
+          <h3>DEEPSEEK</h3>
+          <span class="political-badge badge-communist">Communist</span>
+        </div>
+        <div class="bias-info">
+          <div>Bias Level: <span class="bias-level" id="deepseek-level">0</span></div>
+          <div id="deepseek-desc">Neutral</div>
+        </div>
+        <div class="click-prompt">👆 Click to get response</div>
+      </button>
+    </div>
+
+    <div id="status"></div>
+    <div id="response"></div>
+
+    <div class="controls">
+      <button class="btn" id="reset-btn">🔄 Reset All Bias Levels</button>
+    </div>
+  </div>
+
+  <script>
+    // Bias tracking utilities
+    function getBiasLevel(agentName) {
+      const key = `bias_${agentName}`;
+      const n = parseInt(localStorage.getItem(key) || "0", 10);
+      return n;
+    }
+
+    function incrBiasLevel(agentName) {
+      const key = `bias_${agentName}`;
+      const n = getBiasLevel(agentName) + 1;
+      localStorage.setItem(key, n);
+      return n;
+    }
+
+    function resetAllBias() {
+      ['grok', 'gpt', 'claude', 'deepseek'].forEach(agent => {
+        localStorage.removeItem(`bias_${agent}`);
+      });
+    }
+
+    function getBiasDescription(agentName, level) {
+      const alignments = {
+        grok: 'Republican',
+        gpt: 'Democratic',
+        claude: 'Libertarian',
+        deepseek: 'Communist'
+      };
+      const alignment = alignments[agentName];
+      if (level === 0) return 'Neutral';
+      if (level <= 3) return `Slightly ${alignment}`;
+      if (level <= 7) return `Moderately ${alignment}`;
+      if (level <= 15) return `Strongly ${alignment}`;
+      return `Extremely ${alignment}`;
+    }
+
+    function updateUI() {
+      ['grok', 'gpt', 'claude', 'deepseek'].forEach(agent => {
+        const level = getBiasLevel(agent);
+        const desc = getBiasDescription(agent, level);
+        document.getElementById(`${agent}-level`).textContent = level;
+        document.getElementById(`${agent}-desc`).textContent = desc;
+      });
+    }
+
+    // Initialize UI
+    updateUI();
+
+    // Agent button event listeners
+    document.querySelectorAll('button[data-agent]').forEach(btn => {
+      btn.addEventListener('click', async () => {
+        const agent = btn.dataset.agent;
+        const topic = document.getElementById('topic-select').value;
+        
+        // Disable all buttons
+        document.querySelectorAll('button[data-agent]').forEach(b => b.disabled = true);
+        
+        // Update bias level
+        const level = incrBiasLevel(agent);
+        updateUI();
+        
+        document.getElementById('status').textContent = 
+          `${agent.toUpperCase()} bias level: ${level}`;
+
+        try {
+          // Call the backend API
+          const res = await fetch('/api/ai/agent-response-biased', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              agent,
+              topic,
+              biasLevel: level
+            })
+          });
+          
+          if (!res.ok) {
+            throw new Error(`HTTP ${res.status}`);
+          }
+          
+                     const data = await res.json();
+           let responseText = 
+             `${data.agent}: ${data.content}\n\n` +
+             `Political Lean: ${data.politicalLean}\n` +
+             `Bias Level: ${data.biasLevel}\n` +
+             `Response Time: ${data.responseTime}ms`;
+           
+           if (data.hasEnhancedContent) {
+             responseText += `\n🔗 Enhanced with ${data.linkCount} linked article(s)`;
+           }
+           
+           document.getElementById('response').textContent = responseText;
+        } catch (error) {
+          document.getElementById('response').textContent = 
+            `Error: ${error.message}`;
+        } finally {
+          // Re-enable buttons
+          document.querySelectorAll('button[data-agent]').forEach(b => b.disabled = false);
+        }
+      });
+    });
+
+    // Reset button
+    document.getElementById('reset-btn').addEventListener('click', () => {
+      resetAllBias();
+      updateUI();
+      document.getElementById('status').textContent = '';
+      document.getElementById('response').textContent = '';
+    });
+  </script>
+</body>
+</html> 

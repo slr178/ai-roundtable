@@ -1,0 +1,51 @@
+/* Header Component Specific Styles - Maximum Specificity */
+header.react-header-component.custom-header[data-no-global-styles="true"] {
+  background: rgba(0, 0, 0, 0.1) !important;
+  background-image: none !important;
+  background-attachment: initial !important;
+  backdrop-filter: blur(20px) saturate(150%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(150%) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2) !important;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.2) !important;
+  position: relative !important;
+  z-index: 1000 !important;
+  /* Override any background-related properties */
+  background-repeat: no-repeat !important;
+  background-position: initial !important;
+  background-size: initial !important;
+}
+
+/* Additional specificity for nested elements */
+header.react-header-component.custom-header[data-no-global-styles="true"] * {
+  background-image: none !important;
+}
+
+/* Ensure the header overrides any inherited styles */
+header.react-header-component.custom-header[data-no-global-styles="true"]::before,
+header.react-header-component.custom-header[data-no-global-styles="true"]::after {
+  display: none !important;
+}
+
+/* Ultra-specific override for any global header styles */
+.App header.react-header-component.custom-header[data-no-global-styles="true"],
+body header.react-header-component.custom-header[data-no-global-styles="true"],
+html header.react-header-component.custom-header[data-no-global-styles="true"] {
+  background: rgba(0, 0, 0, 0.1) !important;
+  background-image: none !important;
+  background-attachment: initial !important;
+  background-repeat: no-repeat !important;
+  background-position: initial !important;
+  background-size: initial !important;
+  backdrop-filter: blur(20px) saturate(150%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(150%) !important;
+}
+
+/* Override any global nav/header styles that might affect this component */
+nav.custom-header, 
+header.custom-header {
+  background: rgba(0, 0, 0, 0.1) !important;
+  background-image: none !important;
+  background-attachment: initial !important;
+  backdrop-filter: blur(20px) saturate(150%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(150%) !important;
+} 
