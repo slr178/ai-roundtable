@@ -21,19 +21,41 @@ const AIOrchestrator = require('./services/aiOrchestrator');
 
 const app = express();
 const httpServer = http.createServer(app);
+
+// Configure CORS for both development and production
+const corsOptions = {
+  origin: [
+    "http://localhost:3000",
+    "https://localhost:3000",
+    process.env.FRONTEND_URL,
+    process.env.RAILWAY_STATIC_URL,
+    /railway\.app$/,
+    /vercel\.app$/,
+    /netlify\.app$/
+  ].filter(Boolean),
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  credentials: true,
+  allowedHeaders: ["Content-Type", "Authorization"]
+};
+
 const io = new Server(httpServer, {
-  cors: {
-    origin: "http://localhost:3000",
-    methods: ["GET", "POST"],
-    credentials: true
-  },
+  cors: corsOptions,
   transports: ["polling", "websocket"],
   allowEIO3: true
 });
 
 // Middleware
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json());
+
+// Health check endpoint for Railway
+app.get('/health', (req, res) => {
+  res.status(200).json({ 
+    status: 'healthy', 
+    timestamp: new Date().toISOString(),
+    service: 'AI Roundtable Backend'
+  });
+});
 
 // Database connection
 mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/roundtable')
